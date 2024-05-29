@@ -81,6 +81,32 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetUserById([FromRoute] Guid id)
+        {
+            var existingUser = await user.GetById(id);
+
+            if (existingUser is null)
+            {
+                return NotFound();
+            }
+
+            var response = new UserDto
+            {
+                activeDirectoryUserId = existingUser.activeDirectoryUserId,
+                samAccountName = existingUser.samAccountName,
+                firstName = existingUser.firstName,
+                lastName = existingUser.lastName,
+                eMail = existingUser.eMail,
+                telephoneNumber = existingUser.telephoneNumber,
+                password = existingUser.password,
+                roles = existingUser.roles,
+            };
+
+            return Ok(response);
+        }
+
         [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> EditUser([FromRoute] Guid id, UpdateUserRequestDto request)
@@ -123,7 +149,7 @@ namespace WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
         {
             var userInfo = await user.DeleteAsync(id);
 
